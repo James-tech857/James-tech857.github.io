@@ -21,29 +21,31 @@
          
          <!-- LOGO & BRANDING ZONE -->
          <div class="flex items-center gap-2">
-           <img src="/TODO/Logo/calender.svg" alt="Task Logo" class="h-8 w-auto dark:block dark:invert">
-           <span class="font-bold text-gray-700 dark:text-slate-200 font-sans tracking-wide text-lg">TaskTracker</span>
+           <!-- Shows on light theme, hides on dark theme -->
+           <img src="calender.svg" alt="Task Logo" class="h-8 w-auto dark:block dark:invert">
+           
+           <span class="font-bold text-gray-700 dark:text-slate-200 font-sans tracking-wide">TaskTracker</span>
          </div>
 
          <!-- THE THEME SWITCHER -->
          <div> 
-           <button id="toggle-theme" class="focus:outline-none p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200 flex items-center gap-1" aria-label="Toggle Theme">
-             <img src="/TODO/Logo/dark.svg" alt="Switch to Dark Mode" class="h-7 w-auto dark:hidden">
-             <img src="/TODO/Logo/light.svg" alt="Switch to Light Mode" class="h-7 w-auto hidden dark:block dark:invert">
-             <p class="font-bold text-xs sm:text-sm"> 
-               <span class="text-slate-700 dark:hidden">dark</span>
-               <span class="text-white hidden dark:inline">light</span>
-             </p>
-           </button>
+           <!-- THE LOGO BUTTON (Acts as your light/dark theme switch) -->
+         <button id="toggle-theme" class="focus:outline-none p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200" aria-label="">
+           <!-- Shows on light theme, hides on dark theme -->
+           <img src="dark.svg" alt="Switch to Dark Mode" class="h-9 w-auto dark:hidden">
+           <!-- Hides on light theme, shows on dark theme -->
+           <img src="light.svg" alt="Switch to Light Mode" class="h-9 w-auto hidden dark:block dark:invert">
+          <p  class="font-bold "> <span class="text-slate-700">dark</span>/
+          <span class="text-white">light</span></p>
+         </button>
          </div>
        </div> 
   
-       <!-- SIDEBAR SECTION: Horizontal strip on mobile/tablet, native left panel on desktop screens -->
-       <div class="bg-[#efe2d0] p-4 rounded-lg md:min-h-[700px] dark:bg-slate-800 transition-colors duration-200 shadow-sm">
-         <p class="font-bold text-gray-700 dark:text-slate-200 flex items-center gap-2">
-           <img src="/TODO/Logo/menu.svg" alt="Menu Icon" class="dark:invert">
-           <span>Sidebar</span>
-         </p>
+       <!-- SIDEBAR -->
+       <div class="[grid-area:sidebar] bg-[#efe2d0] w-[200px] p-4 rounded-lg min-h-[800px] dark:bg-slate-800 transition-colors duration-200">
+         <p class="font-bold text-gray-700 dark:text-slate-200">
+          <img src="menu.svg" alt="" class="dark:invert">
+          sidebar</p>
        </div>
     
        <!-- MAIN TODO AREA SECTION: Fluid layout adapts dynamically across viewports -->
