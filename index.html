@@ -1,40 +1,44 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FIXED: Removed the duplicate tailwindcss.com script which was causing configuration conflicts -->
   <script>
     tailwind.config = {
-      darkMode: 'class',
+      darkMode: 'class', // Enables manual class toggling
     }
   </script>
   <title>to-do list</title>
 </head>
-<body class="bg-gray-200 p-2 sm:p-4 dark:bg-slate-950 transition-colors duration-200 min-h-screen flex flex-col justify-start">
+<body class="bg-gray-200 p-4 dark:bg-slate-950 transition-colors duration-200">
 
-   <!-- RESPONSIVE GRID CONFIGURATION: Stacks elements on mobile, side-by-side grid on desktop -->
-   <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-3 w-full max-w-7xl mx-auto auto-rows-auto"> 
+  <!-- FIXED INLINE CSS TEMPLATE STRINGS -->
+   <div class="grid grid-cols-[200px_1fr] grid-rows-[auto_1fr] gap-2 w-full"  
+       style="grid-template-areas:
+         'navbar navbar'
+         'sidebar main';"> 
 
-       <!-- NAVBAR SECTION (Full width across all screen form-factors) -->
-       <div class="md:col-span-2 bg-[#efe2d0] dark:bg-slate-800 p-4 rounded-lg flex justify-between items-center transition-colors duration-200 shadow-sm"> 
+       <!-- FIXED: Swapped out non-existent align-center utility and added dark:bg variant -->
+       <div class="[grid-area:navbar] bg-[#efe2d0] dark:bg-slate-800 p-4 rounded-lg flex justify-between items-center transition-colors duration-200"> 
          
          <!-- LOGO & BRANDING ZONE -->
          <div class="flex items-center gap-2">
            <!-- Shows on light theme, hides on dark theme -->
-           <img src="calender.svg" alt="Task Logo" class="h-8 w-auto dark:block dark:invert">
+           <img src="/TODO/Logo/calender.svg" alt="Task Logo" class="h-8 w-auto dark:block dark:invert">
            
-           <span class="font-bold text-gray-700 dark:text-slate-200 font-sans tracking-wide">TaskTracker</span>
+           <span class="font-bold text-gray-700 dark:text-slate-200 font-sans tracking-wide text-lg">TaskTracker</span>
          </div>
 
-         <!-- THE THEME SWITCHER -->
          <div> 
            <!-- THE LOGO BUTTON (Acts as your light/dark theme switch) -->
          <button id="toggle-theme" class="focus:outline-none p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200" aria-label="">
            <!-- Shows on light theme, hides on dark theme -->
-           <img src="dark.svg" alt="Switch to Dark Mode" class="h-9 w-auto dark:hidden">
+           <img src="/TODO/Logo/dark.svg" alt="Switch to Dark Mode" class="h-9 w-auto dark:hidden">
            <!-- Hides on light theme, shows on dark theme -->
-           <img src="light.svg" alt="Switch to Light Mode" class="h-9 w-auto hidden dark:block dark:invert">
+           <img src="/TODO/Logo/light.svg" alt="Switch to Light Mode" class="h-9 w-auto hidden dark:block dark:invert">
           <p  class="font-bold "> <span class="text-slate-700">dark</span>/
           <span class="text-white">light</span></p>
          </button>
@@ -44,23 +48,23 @@
        <!-- SIDEBAR -->
        <div class="[grid-area:sidebar] bg-[#efe2d0] w-[200px] p-4 rounded-lg min-h-[800px] dark:bg-slate-800 transition-colors duration-200">
          <p class="font-bold text-gray-700 dark:text-slate-200">
-          <img src="menu.svg" alt="" class="dark:invert">
+          <img src="/TODO/Logo/menu.svg" alt="" class="dark:invert">
           sidebar</p>
        </div>
     
-       <!-- MAIN TODO AREA SECTION: Fluid layout adapts dynamically across viewports -->
-       <div class="w-full min-h-[500px] md:h-[700px] bg-white flex flex-col p-4 sm:p-6 md:p-8 relative overflow-y-auto font-serif rounded-lg shadow-sm dark:bg-slate-900 transition-colors duration-200">
-          <h2 class="text-xl sm:text-2xl font-bold text-center text-rose-600 dark:text-rose-400 tracking-wider">TO-DO LIST</h2> 
+       <!-- MAIN TODO AREA -->
+       <div class="[grid-area:main] w-full h-[800px] bg-white flex flex-col p-8 relative overflow-auto font-serif rounded-lg shadow dark:bg-slate-900 transition-colors duration-200">
+          <h2 class="text-2xl font-bold text-center text-rose-600 dark:text-rose-400">TO-DO LIST</h2> 
         
-          <!-- Input Area Wrapper: Swaps to a layout stack if space becomes dangerously thin -->
-          <div class="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-2 mt-4 sticky top-0 bg-white dark:bg-slate-900 py-2 z-10">
-            <input type="text" placeholder="Add to Chores" class="border border-gray-300 p-2 rounded-lg w-full max-w-xl dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:border-rose-500" id="input">
-            <button class="p-2 px-6 bg-green-500 rounded-lg text-[#ffffff] font-bold hover:bg-green-600 transition active:scale-95 whitespace-nowrap" id="btn">Add</button>
+          <!-- Input Area Wrapper -->
+          <div class="flex justify-center mt-4 sticky top-[0px]">
+            <input type="text" placeholder="Add to Chores" class="border border-gray-300 p-2 rounded-lg mr-2 w-[500px] dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:border-rose-500" id="input">
+            <button class="p-2 pl-6 pr-6 bg-green-500 rounded-lg text-[#ffffff] font-bold hover:bg-green-600 transition" id="btn">Add</button>
           </div>
       
-          <div class="mt-6 flex-grow">
+          <div class="mt-6">
             <p class="text-center" id="ErrorPara"></p>
-            <ul id="paras" class="dark:text-slate-300 divide-y divide-gray-100 dark:divide-slate-800"></ul>
+            <ul id="paras" class="dark:text-slate-300"></ul>
           </div>
        </div>
 
