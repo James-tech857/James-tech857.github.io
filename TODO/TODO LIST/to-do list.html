@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>to-do list</title>
+</head>
+<body class="bg-gray-300 flex justify-center align-center">
+  <div class="w-[400px] h-96 bg-white  flex-row justify-center mt-4 p-2">
+      <h2 class="text-2xl font-bold">TO-DO LIST</h2>
+      <select id="choreSelect" class="border p-2 rounded-lg font-bold mx-2 capitalize">
+  <option value="" disabled selected>-- Quick Pick a Chore --</option>
+</select>
+    <input type="text"placeholder="Add to task" class=" border-solid border p-2 mt-2 ml-2 rounded-lg mr-2" id="input">
+    <button class="border-solid border p-2 pl-4 pr-4 bg-red-500 rounded-lg text-[#ffffff] font-bold" id="btn">Add</button>
+    <div class="mt-6">
+      <p  id="ErrorPara">No Chores added yet</p>
+      <ul id="paras"></ul>
+    </div>
+    
+  </div>
+  <script src="to-do list.js"></script>
+</body>
+</html>  
