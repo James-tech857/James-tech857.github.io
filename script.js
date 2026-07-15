@@ -1,47 +1,56 @@
 
+
+// 1. Grab all HTML elements
 const inputElement = document.getElementById('input');
 const addBtn = document.getElementById('btn');
 const error = document.getElementById('ErrorPara');
 const para = document.getElementById('paras'); 
-
-// 1. Grab the HTML elements we need
 const themeToggleBtn = document.getElementById('toggle-theme');
+const menuToggleBtn = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
 
-// 2. Run immediately on page load to apply saved user preferences
-// This checks if the user chose dark mode before, or if their system defaults to dark
+// Keep track of the active view filter ('all', 'active', or 'completed')
+let currentFilter = 'all';
+
+// 2. DARK MODE THEME CONTROLLER
 const savedTheme = localStorage.getItem('theme');
 const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
   document.documentElement.classList.add('dark');
-  savedTheme.className='text-white';
 } else {
   document.documentElement.classList.remove('dark');
 }
 
-// 3. Listen for clicks on your Logo button
 themeToggleBtn.addEventListener('click', () => {
-  // Check if dark mode is currently active
   if (document.documentElement.classList.contains('dark')) {
-    // Switch to Light Mode
     document.documentElement.classList.remove('dark');
-    localStorage.setItem('theme', 'light'); // Save preference
+    localStorage.setItem('theme', 'light'); 
   } else {
-    // Switch to Dark Mode
     document.documentElement.classList.add('dark');
-    localStorage.setItem('theme', 'dark'); // Save preference
+    localStorage.setItem('theme', 'dark'); 
   }
 });
 
-// localStorage.setItem("todoTask", JSON.stringify(taskArray));
-// 1. LOAD DATA: Load objects instead of raw strings
+// 3. STORAGE & APPLICATION INITIALIZATION
 let taskArray = JSON.parse(localStorage.getItem("todoTask")) || [];
 
-// 2. RENDER EXISTING DATA: Pass the entire task object to the UI builder
-taskArray.forEach(taskObject => {
-  renderTaskUI(taskObject);
-});
+// Render matching items based on saved preferences
+function initialRender() {
+  para.innerHTML = "";
+  taskArray.forEach(taskObject => {
+    if (currentFilter === 'all') {
+      renderTaskUI(taskObject);
+    } else if (currentFilter === 'active' && !taskObject.completed) {
+      renderTaskUI(taskObject);
+    } else if (currentFilter === 'completed' && taskObject.completed) {
+      renderTaskUI(taskObject);
+    }
+  });
+}
+initialRender();
 
+// 4. USER INPUT EVENT LISTENERS
 inputElement.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     todo();
@@ -52,33 +61,31 @@ addBtn.addEventListener('click', todo);
 
 function todo() {
   error.textContent = "";
-  const userInput = inputElement.value.trim().toLowerCase();
+  const userInput = inputElement.value.trim();
   
   if (userInput !== "") {
-    // NEW CODE TO CHECK IF THE CHORES ALREADY EXIST
-    const isDuplicate= taskArray.some(task=>task.text.toLowerCase()===userInput.toLowerCase());
-    if(isDuplicate){
-      error.textContent="this chores already exist on your list";
-      error.style.color="orange";
-      error.className="font-bold text-[25px] text-center";
-      return;
+    // DUPLICATE CHECK: Checks text field inside objects (case-insensitive)
+    const isDuplicate = taskArray.some(task => task.text.toLowerCase() === userInput.toLowerCase());
+
+    if (isDuplicate) {
+      error.textContent = "This chore is already on your list!";
+      error.style.color = 'orange'; 
+      error.className = 'font-bold text-2xl text-center';
+      return; 
     }
 
-    // 3. NEW STRUCTURE: Create a task object with text and completed status
     const newTask = {
-      id:crypto.randomUUID(), //create Unique identifier for each array item 
+      id: crypto.randomUUID(), 
       text: userInput,
-      completed: false // Brand new tasks start as incomplete
+      completed: false 
     };
 
     taskArray.push(newTask);
     localStorage.setItem("todoTask", JSON.stringify(taskArray));
 
-    // Render the new item object to the screen
-    renderTaskUI(newTask);
-
+    // Refresh display
+    initialRender();
     updatedUI();
-
     inputElement.value = ''; 
 
   } else {
@@ -88,63 +95,49 @@ function todo() {
   }
 }
 
-// HELPER FUNCTION: Builds the UI with a working checkbox
+// 5. HELPER FUNCTION: RENDERS TASK TO SCREEN
 function renderTaskUI(taskObject) {
   const listItem = document.createElement('li');
-  listItem.className = 'flex items-center gap-[20px] font-bold ml-[10px] mb-4 border-b border-[#ebecec]';
+  // Added soft border for dark mode compatibility (dark:border-slate-800/60)
+  listItem.className = 'flex items-center gap-[20px] font-bold ml-[10px] mb-4 border-b border-[#ebecec] dark:border-slate-800/60 pb-2';
 
-  // A. Create the Checkbox Element
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.checked = taskObject.completed; // Set it checked if it was saved as true
+  checkbox.checked = taskObject.completed; 
   checkbox.className = 'w-5 h-5 cursor-pointer accent-rose-500';
 
-  // B. Create a text container wrapper
   const textSpan = document.createElement('span');
   textSpan.textContent = taskObject.text;
-  textSpan.className = 'flex-1'; // Makes text take up space so delete button stays right
-  
+  textSpan.className = 'flex-1'; 
+
+  // Apply visual style on initial page render
   if (taskObject.completed) {
     textSpan.classList.add('line-through', 'text-gray-400');
   } else {
     textSpan.classList.add('text-black', 'dark:text-white');
   }
 
-
-  // D. Event Listener: When checkbox is checked/unchecked
+  // Handle active status toggle checkbox clicks
   checkbox.addEventListener('change', function() {
-    // Update the completed state inside our array object
     taskObject.completed = checkbox.checked;
-
-    // Apply or remove visual line-through
-    // New dynamic code:
-if (checkbox.checked) {
-  textSpan.classList.add('line-through', 'text-gray-400');
-  textSpan.classList.remove('text-black', 'dark:text-white');
-} else {
-  textSpan.classList.remove('line-through', 'text-gray-400');
-  // This lets Tailwind manage light/dark colors
-  textSpan.classList.add('text-black', 'dark:text-white'); 
-}
-
-    // Save the newly updated checkbox state to LocalStorage
     localStorage.setItem("todoTask", JSON.stringify(taskArray));
+    
+    // Smoothly redraw to ensure filtered views match structural states instantly
+    initialRender();
   });
   
-  // E. Create the Delete Button
   const deleteButton = document.createElement('button');
   deleteButton.textContent = 'Delete';
-  deleteButton.className = 'bg-rose-400 text-white pl-2 pr-2 pt-1 pb-1 rounded-lg font-bold mb-4';
+  deleteButton.className = 'bg-rose-400 text-white pl-2 pr-2 pt-1 pb-1 rounded-lg font-bold';
   
   deleteButton.addEventListener('click', function() {
-    // Filter by the unique ID instead of text string
     taskArray = taskArray.filter(task => task.id !== taskObject.id);
     localStorage.setItem("todoTask", JSON.stringify(taskArray));
     listItem.remove(); 
+    initialRender();
     updatedUI();
   });
 
-  // Assemble all pieces in order: [Checkbox] [Text] [Delete Button]
   listItem.appendChild(checkbox);
   listItem.appendChild(textSpan);
   listItem.appendChild(deleteButton);
@@ -152,32 +145,97 @@ if (checkbox.checked) {
   para.prepend(listItem);
 }
 
+// 6. CLEAR ALL CONTROL ZONE
+const para2 = document.createElement('p');
+para2.className = 'flex justify-end relative';
 
-const para2=document.createElement('p');
-para2.className='flex justify-end relative'
-
-const deleteAllBtn=document.createElement('button');
-deleteAllBtn.textContent='Delete All';
-deleteAllBtn.className=' bg-rose-500 text-white pl-2  pr-2 pt-1 pb-1 rounded-lg font-bold mt-4 fixed bottom-2 ';
+const deleteAllBtn = document.createElement('button');
+deleteAllBtn.textContent = 'Delete All';
+deleteAllBtn.className = 'bg-rose-500 text-white pl-2 pr-2 pt-1 pb-1 rounded-lg font-bold mt-4 fixed bottom-2';
 
 para2.appendChild(deleteAllBtn);
 para.after(para2);
-deleteAllBtn.addEventListener('click',clearAll,)
+deleteAllBtn.addEventListener('click', clearAll);
 
 function clearAll(){
-  taskArray=[];
+  taskArray = [];
   localStorage.setItem("todoTask", JSON.stringify(taskArray));
-  para.innerHTML="";
+  para.innerHTML = "";
   updatedUI();
-  // deleteAllBtn.textContent="";
 }
 
 function updatedUI(){
-if(taskArray.length  > 0){
-para2.style.display="flex"
-}else{
-  para2.style.display="none"
-}
+  if(taskArray.length > 0){
+    para2.style.display = "flex";
+  } else {
+    para2.style.display = "none";
+  }
 }
 updatedUI();
-  
+
+// ==========================================
+// 7. SIDEBAR TOGGLE & FILTER ACTIONS
+// ==========================================
+
+// Mobile Click Slide/Toggle Interceptor
+if (menuToggleBtn && sidebar) {
+  menuToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Stops the document click event from firing instantly
+    
+    // Toggle mobile display mode safely using Tailwind's layout engine
+    sidebar.classList.toggle('max-lg:hidden');
+    
+    // Inject overlay positioning mechanics only when the menu is active
+    sidebar.classList.add(
+      'max-lg:absolute', 
+      'max-lg:z-50', 
+      'max-lg:top-[76px]', 
+      'max-lg:left-2', 
+      'max-lg:w-[240px]',
+      'max-lg:shadow-2xl'
+    );
+  });
+
+  // Close mobile sidebar menu if the user clicks anywhere else on the page canvas
+  document.addEventListener('click', (e) => {
+    if (!sidebar.contains(e.target) && e.target !== menuToggleBtn) {
+      if (window.innerWidth < 1024) { 
+        sidebar.classList.add('max-lg:hidden');
+      }
+    }
+  });
+}
+
+// Sidebar Interactive Navigation Filter Links
+const filterAll = document.getElementById('filter-all');
+const filterActive = document.getElementById('filter-active');
+const filterCompleted = document.getElementById('filter-completed');
+
+function applyFilterHighlight(activeElement) {
+  [filterAll, filterActive, filterCompleted].forEach(el => {
+    if (el) el.classList.remove('text-rose-600', 'dark:text-rose-400');
+  });
+  if (activeElement) activeElement.classList.add('text-rose-600', 'dark:text-rose-400');
+}
+
+if (filterAll) {
+  filterAll.addEventListener('click', () => {
+    currentFilter = 'all';
+    applyFilterHighlight(filterAll);
+    initialRender();
+  });
+}
+if (filterActive) {
+  filterActive.addEventListener('click', () => {
+    currentFilter = 'active';
+    applyFilterHighlight(filterActive);
+    initialRender();
+  });
+}
+if (filterCompleted) {
+  filterCompleted.addEventListener('click', () => {
+    currentFilter = 'completed';
+    applyFilterHighlight(filterCompleted);
+    initialRender();
+  });
+}

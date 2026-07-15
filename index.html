@@ -39,20 +39,31 @@
          </button>
          </div>
        </div> 
-  
-       <!-- SIDEBAR: Completely hidden on mobile/tablet (hidden), displays normally on desktop (lg:block) -->
-       <div class="hidden lg:block bg-[#efe2d0] w-[200px] p-4 rounded-lg min-h-[600px] lg:min-h-[800px] dark:bg-slate-800 transition-colors duration-200">
-         <p class="font-bold text-gray-700 dark:text-slate-200 flex items-center gap-2">
-          <img src="menu.svg" alt="" class="dark:invert">
-          sidebar</p>
+        <!-- SIDEBAR: Updated layout classes to handle mobile absolute overlays and desktop grid integration smoothly -->
+       <div id="sidebar" class="max-lg:hidden lg:block bg-[#efe2d0] w-[200px] p-4 rounded-lg min-h-[600px] lg:min-h-[800px] dark:bg-slate-800 transition-colors duration-200">
+        <button>
+           <img src="menu.svg" alt="" class="dark:invert max-lg:hidden">
+        </button>
+         
+
+         <ul class="space-y-2 font-sans text-sm font-semibold text-gray-600 dark:text-slate-300">
+           <li id="filter-all" class="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-white/40 dark:hover:bg-white/10 text-rose-600 dark:text-rose-400">
+             <span>📝 All Tasks</span>
+           </li>
+           <li id="filter-active" class="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-white/40 dark:hover:bg-white/10">
+             <span>⏳ Active</span>
+           </li>
+           <li id="filter-completed" class="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-white/40 dark:hover:bg-white/10">
+             <span>✅ Completed</span>
+           </li>
+         </ul>
        </div>
+
+
     
        <!-- MAIN TODO AREA: Full screen width on mobile, scales nicely on layout changes -->
-       <!-- <div class="w-full min-h-[600px] lg:h-[800px] bg-white flex flex-col p-4 sm:p-8 relative overflow-auto font-serif rounded-lg shadow dark:bg-slate-900 transition-colors duration-200"> -->
         <!--  NEW FIXED LINE 48: Use this instead -->
         <div class="w-full min-h-[600px] lg:h-[800px] bg-white flex flex-col p-4 sm:p-8 relative max-lg:overflow-visible overflow-auto font-serif rounded-lg shadow dark:bg-slate-900 transition-colors duration-200">
-
-        
           <h2 class="text-2xl font-bold text-center text-rose-600 dark:text-rose-400">TO-DO LIST</h2> 
         
           <!-- Input Area Wrapper: Vertically stacked on mobile viewports, side-by-side rows elements on screens above sm -->
@@ -72,4 +83,6 @@
   <script src="script.js"></script>
 </body>
 </html>
+
+
 
