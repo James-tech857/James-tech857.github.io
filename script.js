@@ -1,125 +1,4 @@
 
-// // const inputElement = document.getElementById('input');
-// // const addBtn = document.getElementById('btn');
-// // const error=document.getElementById('ErrorPara');
-// // const para = document.getElementById('paras'); // This should be a <ul> or <ol> element
-
-// // let taskArray = [];
-
-// // // DATA Storage
-// // const setData= localStorage.setItem("tadoTask", JSON.stringify("taskArray"));
-// // taskArray=JSON.parse(localStorage.getItem("setData"))|| [];
-// // console.log(taskArray);
-
-// // inputElement.addEventListener('keydown',(event)=>{
-// //   if(event.key==='Enter'){
-// //     todo();
-// //     }
-// //   })
-
-// // addBtn.addEventListener('click', todo);
-
-// // function todo() {
-// //   error.textContent="";
-// //   const userInput = inputElement.value.trim().toLowerCase();
-// //     if(userInput!==""){
-// //       const listItem = document.createElement('li');
-// //         listItem.textContent = userInput; 
-// //         listItem.className='flex gap-[200px] font-bold ml-[10px]';
-// //         // Create the delete button
-// //         const deleteButton = document.createElement('button');
-// //         deleteButton.textContent = 'Delete';
-// //         deleteButton.className='bg-red-600 text-white pl-2 pr-2 pt-1 pb-1 rounded-lg font-bold mb-4';
-        
-// //         // Add delete functionality
-// //         deleteButton.addEventListener('click', function() {
-// //           listItem.remove(); 
-// //         });
-
-// //         // Assemble and display
-// //         listItem.appendChild(deleteButton);
-// //         para.prepend(listItem);
-
-// //         // Clear input field after successfully adding
-// //         inputElement.value = ''; 
-
-// //     }else{
-// //     // Show error if the typed task is not in the array
-// //     error.textContent = "please enter the right task !!!";
-// //     error.style.color = 'red';
-// //     error.className='font-bold';
-// //   }
-// // }
-
-
-// const inputElement = document.getElementById('input');
-// const addBtn = document.getElementById('btn');
-// const error = document.getElementById('ErrorPara');
-// const para = document.getElementById('paras'); 
-
-// // 1. LOAD DATA: Correctly get your tasks array on page load
-// let taskArray = JSON.parse(localStorage.getItem("todoTask")) || [];
-
-// // 2. RENDER EXISTING DATA: Display tasks saved from your last session
-// taskArray.forEach(taskText => {
-//   renderTaskUI(taskText);
-// });
-
-// inputElement.addEventListener('keydown', (event) => {
-//   if (event.key === 'Enter') {
-//     todo();
-//   }
-// });
-
-// addBtn.addEventListener('click', todo);
-
-// function todo() {
-//   error.textContent = "";
-//   const userInput = inputElement.value.trim().toLowerCase();
-  
-//   if (userInput !== "") {
-//     // 3. SAVE DATA: Add new task to array and save to LocalStorage
-//     taskArray.push(userInput);
-//     localStorage.setItem("todoTask", JSON.stringify(taskArray));
-
-//     // Render the new item to the screen
-//     renderTaskUI(userInput);
-
-//     // Clear input field after successfully adding
-//     inputElement.value = ''; 
-
-//   } else {
-//     error.textContent = "please enter the right task !!!";
-//     error.style.color = 'red';
-//     error.className = 'font-bold';
-//   }
-// }
-
-// // HELPER FUNCTION: Creates the list item UI and handles deletion
-// function renderTaskUI(taskText) {
-//   const listItem = document.createElement('li');
-//   listItem.textContent = taskText; 
-//   listItem.className = 'flex gap-[200px] font-bold ml-[10px]';
-  
-//   const deleteButton = document.createElement('button');
-//   deleteButton.textContent = 'Delete';
-//   deleteButton.className = 'bg-red-600 text-white pl-2 pr-2 pt-1 pb-1 rounded-lg font-bold mb-4';
-  
-//   // Update storage when an item is deleted
-//   deleteButton.addEventListener('click', function() {
-//     // Remove task from array
-//     taskArray = taskArray.filter(task => task !== taskText);
-//     // Resave updated array to LocalStorage
-//     localStorage.setItem("todoTask", JSON.stringify(taskArray));
-//     // Remove element from screen
-//     listItem.remove(); 
-//   });
-
-//   listItem.appendChild(deleteButton);
-//   para.prepend(listItem);
-// }
-
-
 const inputElement = document.getElementById('input');
 const addBtn = document.getElementById('btn');
 const error = document.getElementById('ErrorPara');
@@ -135,6 +14,7 @@ const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matc
 
 if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
   document.documentElement.classList.add('dark');
+  savedTheme.className='text-white';
 } else {
   document.documentElement.classList.remove('dark');
 }
@@ -175,6 +55,15 @@ function todo() {
   const userInput = inputElement.value.trim().toLowerCase();
   
   if (userInput !== "") {
+    // NEW CODE TO CHECK IF THE CHORES ALREADY EXIST
+    const isDuplicate= taskArray.some(task=>task.text.toLowerCase()===userInput.toLowerCase());
+    if(isDuplicate){
+      error.textContent="this chores already exist on your list";
+      error.style.color="orange";
+      error.className="font-bold text-[25px] text-center";
+      return;
+    }
+
     // 3. NEW STRUCTURE: Create a task object with text and completed status
     const newTask = {
       id:crypto.randomUUID(), //create Unique identifier for each array item 
@@ -214,6 +103,13 @@ function renderTaskUI(taskObject) {
   const textSpan = document.createElement('span');
   textSpan.textContent = taskObject.text;
   textSpan.className = 'flex-1'; // Makes text take up space so delete button stays right
+  
+  if (taskObject.completed) {
+    textSpan.classList.add('line-through', 'text-gray-400');
+  } else {
+    textSpan.classList.add('text-black', 'dark:text-white');
+  }
+
 
   // D. Event Listener: When checkbox is checked/unchecked
   checkbox.addEventListener('change', function() {
@@ -221,13 +117,15 @@ function renderTaskUI(taskObject) {
     taskObject.completed = checkbox.checked;
 
     // Apply or remove visual line-through
-    if (checkbox.checked) {
-      textSpan.style.textDecoration = 'line-through';
-      textSpan.style.color = '#9ca3af';
-    } else {
-      textSpan.style.textDecoration = 'none';
-      textSpan.style.color = 'black';
-    }
+    // New dynamic code:
+if (checkbox.checked) {
+  textSpan.classList.add('line-through', 'text-gray-400');
+  textSpan.classList.remove('text-black', 'dark:text-white');
+} else {
+  textSpan.classList.remove('line-through', 'text-gray-400');
+  // This lets Tailwind manage light/dark colors
+  textSpan.classList.add('text-black', 'dark:text-white'); 
+}
 
     // Save the newly updated checkbox state to LocalStorage
     localStorage.setItem("todoTask", JSON.stringify(taskArray));
