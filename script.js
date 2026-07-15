@@ -1,5 +1,4 @@
 
-
 // 1. Grab all HTML elements
 const inputElement = document.getElementById('input');
 const addBtn = document.getElementById('btn');
