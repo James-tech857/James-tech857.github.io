@@ -6,7 +6,7 @@ const error = document.getElementById('ErrorPara');
 const para = document.getElementById('paras'); 
 const themeToggleBtn = document.getElementById('toggle-theme');
 const menuToggleBtn = document.getElementById('menu-toggle');
-const sidebar = document.getElementById('sidebar');
+const hidden = document.getElementById('hidden');
 
 // Keep track of the active view filter ('all', 'active', or 'completed')
 let currentFilter = 'all';
@@ -177,45 +177,67 @@ updatedUI();
 // ==========================================
 
 // Mobile Click Slide/Toggle Interceptor
-if (menuToggleBtn && sidebar) {
-  menuToggleBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // Stops the document click event from firing instantly
+// if (menuToggleBtn && hidden) {
+//   menuToggleBtn.addEventListener('click', (e) => {
+//     e.stopPropagation(); // Stops the document click event from firing instantly
     
-    // Toggle mobile display mode safely using Tailwind's layout engine
-    sidebar.classList.toggle('max-lg:hidden');
+//     // Toggle mobile display mode safely using Tailwind's layout engine
+//     hidden.classList.toggle('max-lg:hidden');
     
-    // Inject overlay positioning mechanics only when the menu is active
-    sidebar.classList.add(
-      'max-lg:absolute', 
-      'max-lg:z-50', 
-      'max-lg:top-[76px]', 
-      'max-lg:left-2', 
-      'max-lg:w-[240px]',
-      'max-lg:shadow-2xl'
-    );
-  });
+//     // Inject overlay positioning mechanics only when the menu is active
+//     hidden.classList.add(
+//       'max-lg:absolute', 
+//       'max-lg:z-50', 
+//       'max-lg:top-[76px]', 
+//       'max-lg:left-2', 
+//       'max-lg:w-[240px]',
+//       'max-lg:shadow-2xl'
+//     );
+//   });
 
-  // Close mobile sidebar menu if the user clicks anywhere else on the page canvas
-  document.addEventListener('click', (e) => {
-    if (!sidebar.contains(e.target) && e.target !== menuToggleBtn) {
-      if (window.innerWidth < 1024) { 
-        sidebar.classList.add('max-lg:hidden');
-      }
-    }
-  });
-}
+//   // Close mobile sidebar menu if the user clicks anywhere else on the page canvas
+//   document.addEventListener('click', (e) => {
+//     if (!hidden.contains(e.target) && e.target !== menuToggleBtn) {
+//       if (window.innerWidth < 1024) { 
+//         hidden.classList.add('max-lg:hidden');
+//       }
+//     }
+//   });
+// }
 
+// menuToggleBtn.addEventListener('click',()=>{
+// hidden.classList.toggle('block')
+// })
 // Sidebar Interactive Navigation Filter Links
 const filterAll = document.getElementById('filter-all');
 const filterActive = document.getElementById('filter-active');
 const filterCompleted = document.getElementById('filter-completed');
 
+// function applyFilterHighlight(activeElement) {
+//   [filterAll, filterActive, filterCompleted].forEach(el => {
+//     if (el) el.classList.remove('text-rose-600', 'dark:text-rose-400');
+//   });
+//   if (activeElement) activeElement.classList.add('text-rose-600', 'dark:text-rose-400');
+// }
+
 function applyFilterHighlight(activeElement) {
+  // 1. Calculate the real-time counts from your task array
+  const totalAll = taskArray.length;
+  const totalActive = taskArray.filter(task => !task.completed).length;
+  const totalCompleted = taskArray.filter(task => task.completed).length;
+
+  // 2. Update the text on the screen for ALL three buttons
+  if (filterAll) filterAll.textContent = `All (${totalAll})`;
+  if (filterActive) filterActive.textContent = `Active (${totalActive})`;
+  if (filterCompleted) filterCompleted.textContent = `Completed (${totalCompleted})`;
+
+  // 3. Keep your original color-toggling engine working smoothly
   [filterAll, filterActive, filterCompleted].forEach(el => {
     if (el) el.classList.remove('text-rose-600', 'dark:text-rose-400');
   });
   if (activeElement) activeElement.classList.add('text-rose-600', 'dark:text-rose-400');
 }
+
 
 if (filterAll) {
   filterAll.addEventListener('click', () => {
@@ -237,4 +259,32 @@ if (filterCompleted) {
     applyFilterHighlight(filterCompleted);
     initialRender();
   });
+}
+
+// ==========================================
+// 7. SIDEBAR TOGGLE & FILTER ACTIONS
+// ==========================================
+
+// 1. Grab the filter buttons from the HTML
+// const filterAll = document.getElementById('filter-all');
+// const filterActive = document.getElementById('filter-active');
+// const filterCompleted = document.getElementById('filter-completed');
+
+// 2. The master function that toggles colors AND recalculates numbers
+function applyFilterHighlight(activeElement) {
+  // Calculate real-time numbers from your task database array
+  const totalAll = taskArray.length;
+  const totalActive = taskArray.filter(task => !task.completed).length;
+  const totalCompleted = taskArray.filter(task => task.completed).length;
+
+  // Instantly rewrite the text with the fresh numbers
+  if (filterAll) filterAll.textContent = `All (${totalAll})`;
+  if (filterActive) filterActive.textContent = `Active (${totalActive})`;
+  if (filterCompleted) filterCompleted.textContent = `Completed (${totalCompleted})`;
+
+  // Standard color highlight toggling
+  [filterAll, filterActive, filterCompleted].forEach(el => {
+    if (el) el.classList.remove('text-rose-600', 'dark:text-rose-400');
+  });
+  if (activeElement) activeElement.classList.add('text-rose-600', 'dark:text-rose-400');
 }
