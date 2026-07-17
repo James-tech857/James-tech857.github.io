@@ -126,8 +126,12 @@ function renderTaskUI(taskObject) {
   });
   
   const deleteButton = document.createElement('button');
-  deleteButton.textContent = 'Delete';
-  deleteButton.className = 'bg-rose-400 text-white pl-2 pr-2 pt-1 pb-1 rounded-lg font-bold';
+  deleteButton.innerHTML =`
+  <img src="delete.svg" class="dark:invert">
+  `;
+  // deleteButton.className = 'bg-rose-300 text-white pl-2 pr-2 pt-1 pb-1 rounded-lg font-bold';
+  deleteButton.className = 'p-1.5 rounded-lg text-gray-400 hover:text-rose-500 hover:bg-rose-50 dark:text-slate-500 dark:hover:text-rose-400 dark:hover:bg-rose-950/30 transition-all duration-200 flex items-center justify-center';
+
   
   deleteButton.addEventListener('click', function() {
     taskArray = taskArray.filter(task => task.id !== taskObject.id);
@@ -149,9 +153,11 @@ const para2 = document.createElement('p');
 para2.className = 'flex justify-end relative';
 
 const deleteAllBtn = document.createElement('button');
-deleteAllBtn.textContent = 'Delete All';
-deleteAllBtn.className = 'bg-rose-500 text-white pl-2 pr-2 pt-1 pb-1 rounded-lg font-bold mt-4 fixed bottom-2';
-
+deleteAllBtn.innerHTML =`
+<img src="/delete.svg"class="dark:invert" >
+<p> All</p>
+`;
+deleteAllBtn.className = 'flex  gap-2 bg-[#b14a43] hover:bg-[#963b35] text-white px-4 py-2 rounded-lg font-bold mt-4 fixed bottom-4 shadow-md transition-colors duration-200 z-30';
 para2.appendChild(deleteAllBtn);
 para.after(para2);
 deleteAllBtn.addEventListener('click', clearAll);
@@ -176,68 +182,10 @@ updatedUI();
 // 7. SIDEBAR TOGGLE & FILTER ACTIONS
 // ==========================================
 
-// Mobile Click Slide/Toggle Interceptor
-// if (menuToggleBtn && hidden) {
-//   menuToggleBtn.addEventListener('click', (e) => {
-//     e.stopPropagation(); // Stops the document click event from firing instantly
-    
-//     // Toggle mobile display mode safely using Tailwind's layout engine
-//     hidden.classList.toggle('max-lg:hidden');
-    
-//     // Inject overlay positioning mechanics only when the menu is active
-//     hidden.classList.add(
-//       'max-lg:absolute', 
-//       'max-lg:z-50', 
-//       'max-lg:top-[76px]', 
-//       'max-lg:left-2', 
-//       'max-lg:w-[240px]',
-//       'max-lg:shadow-2xl'
-//     );
-//   });
-
-//   // Close mobile sidebar menu if the user clicks anywhere else on the page canvas
-//   document.addEventListener('click', (e) => {
-//     if (!hidden.contains(e.target) && e.target !== menuToggleBtn) {
-//       if (window.innerWidth < 1024) { 
-//         hidden.classList.add('max-lg:hidden');
-//       }
-//     }
-//   });
-// }
-
-// menuToggleBtn.addEventListener('click',()=>{
-// hidden.classList.toggle('block')
-// })
 // Sidebar Interactive Navigation Filter Links
 const filterAll = document.getElementById('filter-all');
 const filterActive = document.getElementById('filter-active');
 const filterCompleted = document.getElementById('filter-completed');
-
-// function applyFilterHighlight(activeElement) {
-//   [filterAll, filterActive, filterCompleted].forEach(el => {
-//     if (el) el.classList.remove('text-rose-600', 'dark:text-rose-400');
-//   });
-//   if (activeElement) activeElement.classList.add('text-rose-600', 'dark:text-rose-400');
-// }
-
-function applyFilterHighlight(activeElement) {
-  // 1. Calculate the real-time counts from your task array
-  const totalAll = taskArray.length;
-  const totalActive = taskArray.filter(task => !task.completed).length;
-  const totalCompleted = taskArray.filter(task => task.completed).length;
-
-  // 2. Update the text on the screen for ALL three buttons
-  if (filterAll) filterAll.textContent = `All (${totalAll})`;
-  if (filterActive) filterActive.textContent = `Active (${totalActive})`;
-  if (filterCompleted) filterCompleted.textContent = `Completed (${totalCompleted})`;
-
-  // 3. Keep your original color-toggling engine working smoothly
-  [filterAll, filterActive, filterCompleted].forEach(el => {
-    if (el) el.classList.remove('text-rose-600', 'dark:text-rose-400');
-  });
-  if (activeElement) activeElement.classList.add('text-rose-600', 'dark:text-rose-400');
-}
-
 
 if (filterAll) {
   filterAll.addEventListener('click', () => {
@@ -261,15 +209,6 @@ if (filterCompleted) {
   });
 }
 
-// ==========================================
-// 7. SIDEBAR TOGGLE & FILTER ACTIONS
-// ==========================================
-
-// 1. Grab the filter buttons from the HTML
-// const filterAll = document.getElementById('filter-all');
-// const filterActive = document.getElementById('filter-active');
-// const filterCompleted = document.getElementById('filter-completed');
-
 // 2. The master function that toggles colors AND recalculates numbers
 function applyFilterHighlight(activeElement) {
   // Calculate real-time numbers from your task database array
@@ -281,6 +220,9 @@ function applyFilterHighlight(activeElement) {
   if (filterAll) filterAll.textContent = `All (${totalAll})`;
   if (filterActive) filterActive.textContent = `Active (${totalActive})`;
   if (filterCompleted) filterCompleted.textContent = `Completed (${totalCompleted})`;
+  filterAll.className="font-bold hover:bg-white/40 dark:hover:bg-white/10 p-2 rounded-lg cursor-pointer";
+  filterActive.className="font-bold hover:bg-white/40 dark:hover:bg-white/10 p-2 rounded-lg cursor-pointer";
+  filterCompleted.className="font-bold hover:bg-white/40 dark:hover:bg-white/10 p-2 rounded-lg cursor-pointer";
 
   // Standard color highlight toggling
   [filterAll, filterActive, filterCompleted].forEach(el => {
