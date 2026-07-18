@@ -37,12 +37,16 @@ let taskArray = JSON.parse(localStorage.getItem("todoTask")) || [];
 // Render matching items based on saved preferences
 function initialRender() {
   para.innerHTML = "";
+  if (taskArray.length === 0) {
+        para.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400 font-medium py-8 text-xl">No tasks entered yet. Add a chore to get started!</p>`;
+        return;
+  }
   taskArray.forEach(taskObject => {
     if (currentFilter === 'all') {
       renderTaskUI(taskObject);
     } else if (currentFilter === 'active' && !taskObject.completed) {
       renderTaskUI(taskObject);
-    } else if (currentFilter === 'completed' && taskObject.completed) {
+    } else if (currentFilter === 'completed'&& taskObject.completed) {
       renderTaskUI(taskObject);
     }
   });
